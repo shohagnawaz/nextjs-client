@@ -12,42 +12,39 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { adminRoutes } from "@/routes/adminRoutes";
+import { userRoutes } from "@/routes/userRoutes";
+import { Route } from "@/types";
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Getting Started",
-      items: [
-        {
-          title: "Go Home",
-          url: "/"
-        },
-        {
-          title: "Write Blog",
-          url: "/dashboard/write-blog"
-        },
-        {
-          title: "Analytics",
-          url: "/dashboard/analytics" 
-        },
-      ],
-    },
-  ],
-}
+export function AppSidebar({user, ...props }: {role: string} & React.ComponentProps<typeof Sidebar>) {
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  let routes : Route[] = [];
+
+  switch (user.role) {
+    case "admin":
+      routes = adminRoutes;
+      break;   
+    
+    case "user":
+      routes = userRoutes;
+      break;  
+    
+    default:
+      routes = [];
+      break
+  }
+
   return (
     <Sidebar {...props}>     
       <SidebarContent>        
-        {data.navMain.map((item) => (
+        {routes.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
+                    <SidebarMenuButton asChild>
                       <Link href={item.url}>{item.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
